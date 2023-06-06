@@ -40,15 +40,15 @@
   },
   {
     "id": 4,
-    "title": "Producto N4",
+    "title": "Producto 4",
     "description": "Este es el producto N4",
     "code": "abc4",
-    "price": 200,
-    "status": true,
+    "price": 100,
+    "status": false,
     "stock": 25,
     "category": "test",
     "thumbnail": [
-      "producto4.png"
+      "producto19.png"
     ]
   }
 ]

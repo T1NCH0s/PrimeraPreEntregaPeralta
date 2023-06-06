@@ -70,6 +70,7 @@ class Products {
       const editProduct = await productsServices.updateProduct(req.body, req.params.pid)
       if (!editProduct) return res.json({ response: "El producto a actualizar no existe, verifica el ID..." });
       if (editProduct == "existCode") return res.json({ response: "Ya hay un producto creado con ese Code." });
+      if (req.body.id) return res.json({ response: "No proporciones el ID del producto, la app lo hará por ti." });
       return res.json({response: "Producto actualizado!"})
     }catch(error){
       res.status(500).send("Ha ocurrido un error en el servidor");
