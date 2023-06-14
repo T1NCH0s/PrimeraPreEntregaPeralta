@@ -1,31 +1,15 @@
 const fs = require("fs")
+const utils = require("../../../utils/utils.js")
 
-class ProductsServices {
-    constructor() {
-      this.products = "./src/data/products.json";
-  }
-
-  //Verifica si existe el archivo 'products.json'
-  async existFile() {
-    try {
-      fs.accessSync(this.products);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  async readFile(fileName) {
-    try {
-      const file = await fs.promises.readFile(fileName, "utf-8");
-      return JSON.parse(file);
-    } catch (error) {
-      console.log(`error al leer el archivo, error: ${error}`);
-    }
+class ProductsServices extends utils{
+  constructor() {
+    super()
+    this.products = "./src/data/products.json";
   }
 
   async validateId() {
-    let file = await this.readFile(this.products);
+    if (!await super.existFile(this.products)) return 1;
+    let file = await super.readFile(this.products);
     if (file.length) {
       let idMayor = file.reduce((p, c) => {
         return c.id > p ? c.id : p;
@@ -36,7 +20,7 @@ class ProductsServices {
   }
 
   async getProducts() {
-    return (await this.readFile(this.products));
+    return (await super.readFile(this.products));
   }
 
   async addProduct(obj) {
@@ -50,8 +34,9 @@ class ProductsServices {
 
     try {
       let file = [];
-      if (await this.existFile()) {
-        file = await this.readFile(this.products);
+      console.log(await super.existFile(this.products))
+      if (await super.existFile(this.products)) {
+        file = await super.readFile(this.products);
       }
       file.push({
         id: await this.validateId(),
@@ -73,14 +58,14 @@ class ProductsServices {
   }
 
   async getProductById(productId) {
-    let products = await this.readFile(this.products);
+    let products = await super.readFile(this.products);
     let product = products.find((producto) => producto.id === Number(productId));
     return product
   }
 
   async deleteProduct(productId) {
     console.log(productId)
-    let products = await this.readFile(this.products);
+    let products = await super.readFile(this.products);
     let operacionEliminar = products.findIndex((producto) => producto.id === Number(productId));
 
     if (operacionEliminar !== -1) {
@@ -93,7 +78,7 @@ class ProductsServices {
   }
 
   async updateProduct(obj, id) {
-    let products = await this.readFile(this.products);
+    let products = await super.readFile(this.products);
     let oldObj = products.find((producto) => producto.id === Number(id));
 
     //Verifica si ya hay un producto con el mismo code.

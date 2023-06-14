@@ -1,31 +1,16 @@
 const fs = require("fs");
+const utils = require("../../../utils/utils.js")
 
-class CartsServices {
+class CartsServices extends utils{
   constructor() {
+    super()
     this.carts = "./src/data/carts.json";
     this.products = "./src/data/products.json";
   }
 
-  async existFile() {
-    try {
-      fs.accessSync(this.carts);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  async readFile(fileName) {
-    try {
-      const file = await fs.promises.readFile(fileName, "utf-8");
-      return JSON.parse(file);
-    } catch (error) {
-      console.log(`error al leer el archivo, error: ${error}`);
-    }
-  }
-
   async validateId() {
-    let file = await this.readFile(this.carts);
+    if (!await super.existFile(this.carts)) return 1;
+    let file = await super.readFile(this.carts);
     if (file.length) {
       let idMayor = file.reduce((p, c) => {
         return c.id > p ? c.id : p;
@@ -38,8 +23,8 @@ class CartsServices {
   async newCart() {
     try {
       let file = [];
-      if (await this.existFile()) {
-        file = await this.readFile(this.carts);
+      if (await super.existFile(this.carts)) {
+        file = await super.readFile(this.carts);
       }
       file.push({
         id: await this.validateId(),
@@ -54,7 +39,7 @@ class CartsServices {
 
   async getProductsByCartId(cartId) {
     try {
-      let productCarts = await this.readFile(this.carts);
+      let productCarts = await super.readFile(this.carts);
       let cart = productCarts.find((producto) => producto.id === Number(cartId));
       return cart.products;
     } catch (error) {}
@@ -63,13 +48,13 @@ class CartsServices {
   async addProductCartId(cartId, productId) {
     try {
       //Obtengo los productos de la cart por el ID
-      let productCarts = await this.readFile(this.carts);
+      let productCarts = await super.readFile(this.carts);
       let carts = productCarts.find((cart) => cart.id === Number(cartId));
       if (!carts) return "cartNotFound";
       // console.log(carts.products) -- Ejemeplo id 1 [ { product: 1, quantity: 1 }, { product: 2, quantity: 2 } ]
 
       //Verifico si el Producto existe en el products.json
-      let products = await this.readFile(this.products);
+      let products = await super.readFile(this.products);
       let product = products.find((producto) => producto.id === Number(productId));
       if (!product) return "ProductNotFound";
 

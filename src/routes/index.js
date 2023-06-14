@@ -1,14 +1,17 @@
-const productsApi = require("../components/products")
-const cartsApi = require("../components/carts")
+const productsApi = require("../components/products");
+const cartsApi = require("../components/carts");
+const UsersApi = require("../components/users");
 
 module.exports = (app) => {
-  productsApi(app)
-  cartsApi(app)
+  productsApi(app);
+  cartsApi(app);
+  UsersApi(app);
   app.get("/", (req, res) => {
-    let htmlBody = ``;
-    htmlBody += `<h1 style="">¡Bienvenido!</h1>`;
-    htmlBody += `<a href="http://localhost:8080/api/products">Explora productos</a>`;
-    htmlBody += `<a href="http://localhost:8080/api/carts">Explora tu carrito</a>`;
-    res.send(htmlBody);
+    const settings = {
+      name: "Usuario",
+      lastname: "/a",
+      title: "Home",
+    };
+    res.render("home", settings);
   });
 };

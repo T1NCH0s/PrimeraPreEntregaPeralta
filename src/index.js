@@ -1,27 +1,57 @@
-const express = require('express');
-const PORT = 8080;
-const routes = require("./routes")
+require("dotenv").config();
+const express = require("express");
+const routes = require("./routes");
+const handlebars = require("express-handlebars");
+const multer = require("multer");
 
-class Server{
- constructor() {
-  this.app = express();
-  this.settings();
-  this.routes();
- }
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
 
- settings(){
-  this.app.use(express.json());
-  this.app.use(express.urlencoded({extended:true}));
-  this.app.use("/static",express.static(`${__dirname}/public`));
- }
+const upload = multer({
+  storage,
+});
 
- routes(){
-  routes(this.app);
- }
+//express() = app
+express().post("/subidaarchivo", upload.single("file"), (req, res) => {
+  res.send("Se subio con exito!");
+});
 
- listen(){
-  this.app.listen(PORT, ()=> {console.log(`http:localhost:${PORT}`)});
- }
+class Server {
+  constructor() {
+    this.app = express();
+    this.settings();
+    this.routes();
+    this.upload == multer({
+      storage,
+    });
+  }
+
+  settings() {
+    //Handlebars
+    this.app.engine("handlebars", handlebars.engine());
+    this.app.set("view engine", "handlebars");
+    this.app.set("views", __dirname + "/views");
+
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use("/static", express.static(`${__dirname}/public`));
+  }
+
+  routes() {
+    routes(this.app);
+  }
+
+  listen() {
+    this.app.listen(process.env.PORT, () => {
+      console.log(`http:localhost:${process.env.PORT}`);
+    });
+  }
 }
 
 module.exports = new Server();
